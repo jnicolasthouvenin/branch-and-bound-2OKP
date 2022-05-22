@@ -2,8 +2,6 @@
 # ELEMENTS ######################
 
 function Base.show(io::IO, sol::Sol)
-    #print(io,"($(sol.z), $(sol.x))")
-    #print(io,sol.x)
     print(io,"($(sol.z), $(sol.rank), $(sol.crowding), $(sol.hv_contrib))")
 end
 

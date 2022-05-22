@@ -1,4 +1,12 @@
 
+# SMS EMOA stands for S Metric Selection Evolutionary Multi-Objective Algorithm
+# S metric is the measure of hypervolume
+# Simply put, each iteration, the algorithm generate a random feasible offspring and insert it in the popultion,
+# and then removes the individual that is the less contributing to the overall hypervolume.
+# Thus: |P_k| = |P_{k+1}| (stationary population)
+# The algorithm tend to focus more on the "eye" of the pareto front.
+# source: https://doi.org/10.1007/978-3-540-31880-4_5
+
 function SMS_EMOA_update(P::Vector{Sol}, config::Config)
 
     debug && DEBUG_feasible_solutions(P)
@@ -52,8 +60,6 @@ function SMS_EMOA_update(P::Vector{Sol}, config::Config)
     for front in F
         INDICATOR_hypervolume_contribution!(front)
     end
-
-    #- Find the solution in last rank that contributes the less to hv -#
 
     R_I = F[length(F)]
 
@@ -122,8 +128,6 @@ function SMS_EMOA_solve(prob::_MOMKP, config::Config; seeding_sols = Vector{Sol}
         it += 1
         P = SMS_EMOA_update(P, config)
     end
-
-    #exit()
 
     # evaluate population
     F = INDICATOR_fast_non_dominated_sort!(P)

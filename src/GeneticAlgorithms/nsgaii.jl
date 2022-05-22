@@ -1,7 +1,9 @@
 
+# NSGAII implementation
+# source: https://doi.org/10.1007/3-540-45356-3_83
+
 function NSGAII_update(P::Vector{Sol}, config::Config)
 
-    # P is supposed to be already evaluated (vector of AVLs)
     debug && DEBUG_correct_evaluations(P, crowding = true)
 
     #------ Offsprings -------#

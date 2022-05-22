@@ -1,4 +1,11 @@
 
+# This module contains the implementation of two EMOA algorithms: NSGAII and SMS-EMOA
+# Implementation follows the general algorithms presented in:
+# - source nsgaii  : https://doi.org/10.1007/3-540-45356-3_83
+# - source sms-emoa: https://doi.org/10.1007/978-3-540-31880-4_5
+
+# This project was part of the course Multi-objective Metaheuristics from the master 2 ORO at University of Nantes
+
 module GeneticAlgorithms
 
 # Libraries
@@ -29,6 +36,7 @@ debug = false       # wether of not assertions are checked (expensive, use only 
 
 # CODE #######################################################
 
+# returns the configuration considered best by our experiments
 function get_optimal_config(prob::_MOMKP, algorithm)
     size, crossover, mutation_rate = 0,0,0
 

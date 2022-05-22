@@ -41,6 +41,9 @@ function DEBUG_feasible_solutions(solutions::Vector{Sol})
     end
 end
 
+# Debug functions are used to check assertions on the variables at runtime
+# They are time consuming! Use only for debugging purposes!
+
 # DEBUG ONE FEASIBLE MOMKP SOLUTION
 
 function DEBUG_feasible_solution(sol::Sol)
