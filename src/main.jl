@@ -76,7 +76,7 @@ mutable struct Config
     # verbose
     # ...
 
-    Config() = new(true) # by default we are in Debug mode
+    Config() = new(false) # by default we are in Release mode
 end
 
 CONFIG     = Config()
