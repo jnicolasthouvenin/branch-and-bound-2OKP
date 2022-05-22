@@ -21,8 +21,6 @@ function LB_dichoSearch(prob::BiOKP, assignment::Assignment; parentToChild = Par
 
     CONFIG.debug && DEBUG_parentToChild(prob, parentToChild)
 
-    @timeit to "LB_dichoSearch" begin
-
     LB = LowerBound() # init empty lower bound
 
     LB.sols = copy(parentToChild.knownSols)
@@ -64,8 +62,6 @@ function LB_dichoSearch(prob::BiOKP, assignment::Assignment; parentToChild = Par
         end
     end
 
-    end # TimerOutput
-
     CONFIG.debug && DEBUG_LB(prob, LB)
 
 	return LB
@@ -83,8 +79,6 @@ function LB_update!(prob::BiOKP, LB::LowerBound, dominatedNadirs::Vector{PairOfS
     CONFIG.debug && DEBUG_UB(prob, UB)
     CONFIG.debug && DEBUG_nadirs(prob, dominatedNadirs)
 
-    @timeit to "LB_update!" begin
-
     for sol in UB.sols
         # check if the solution found in the upper bound is binary (thus feasible)
         if !(COMPONENTS.methodUB == RELAX_LIN_CLASSIC) || sol.isBinary
@@ -99,8 +93,6 @@ function LB_update!(prob::BiOKP, LB::LowerBound, dominatedNadirs::Vector{PairOfS
 
     newNadirsToStudy = LB_getNadirsWithNadirsToStudy(prob, LB, dominatedNadirs)
 
-    end # TimerOutputs
-
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_nadirs(prob, newNadirsToStudy)
 
@@ -114,8 +106,6 @@ function LB_getNadirs(prob::BiOKP, LB::LowerBound)
 
     CONFIG.debug && DEBUG_LB(prob, LB)
 
-    @timeit to "LB_getNadirs" begin
-
     sols = LB.sols
     nadirs = Vector{PairOfSolution}(undef, length(sols) - 1)
 
@@ -126,8 +116,6 @@ function LB_getNadirs(prob::BiOKP, LB::LowerBound)
     	sols = sols.tail
     	iterNadirs += 1
     end
-
-    end # TimerOutputs
 
     CONFIG.debug && DEBUG_nadirs(prob, nadirs)
 
@@ -148,8 +136,6 @@ function LB_insert!(prob::BiOKP, LB::LowerBound, sol::Sol)
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_feasibleBinarySolution(prob, sol)
     CONFIG.debug && DEBUG_isntDominatingAny(sol, LB.sols)
-
-    @timeit to "LB_insert!" begin
 
     ll = LB.sols
     while ll != nil(Sol)
@@ -193,8 +179,6 @@ function LB_insert!(prob::BiOKP, LB::LowerBound, sol::Sol)
         ll = ll.tail
     end
 
-    end # TimerOutputs
-
     CONFIG.debug && DEBUG_LB(prob, LB)
 
     return false
@@ -209,8 +193,6 @@ function LB_removeAllDominatedSols!(prob::BiOKP, LB::LowerBound, sol::Sol)
     CONFIG.debug && DEBUG_feasibleBinarySolution(prob, sol)
 
     function LB_removeOneDominatedSol!(prob::BiOKP, front::LinkedList{Sol}, sol::Sol)
-
-        @timeit to "LB_removeOneDominatedSol!" begin
 
         ll = front
 
@@ -235,15 +217,11 @@ function LB_removeAllDominatedSols!(prob::BiOKP, LB::LowerBound, sol::Sol)
             end
         end
 
-        end # TimerOutputs
-
         CONFIG.debug && DEBUG_front(prob, front)
 
         return removed
 
     end
-
-    @timeit to "LB_removeAllDominatedSols!" begin
 
     # delete in LB the solutions dominated by sol
     front = LB.sols
@@ -253,8 +231,6 @@ function LB_removeAllDominatedSols!(prob::BiOKP, LB::LowerBound, sol::Sol)
             front = front.tail
         end
     end
-
-    end # TimerOutputs
 
     CONFIG.debug && DEBUG_LB(prob, LB)
 
@@ -267,8 +243,6 @@ function LB_getNadirsWithNadirsToStudy(prob::BiOKP, LB::LowerBound, nadirsToStud
 
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_nadirs(prob, nadirsToStudy)
-
-    @timeit to "LB_getNadirsWithNadirsToStudy" begin
 
     # if the nadirsToStudy list is empty, just call the default function LB_getNadirs
     if length(nadirsToStudy) == 0
@@ -303,8 +277,6 @@ function LB_getNadirsWithNadirsToStudy(prob::BiOKP, LB::LowerBound, nadirsToStud
             iterNadirs += 1
         end
     end
-
-    end # TimerOutputs
 
     CONFIG.debug && DEBUG_nadirs(prob, nadirs)
 

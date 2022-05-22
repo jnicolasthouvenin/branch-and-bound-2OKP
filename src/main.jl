@@ -38,8 +38,6 @@ println("\n\$ Loading libraries")
 
 using Printf
 @printf("%-6s %-7s %-21s %s\n", "[INFO]", "using", "Printf", "")
-@printf("%-6s %-7s %-21s %s\n", "[INFO]", "using", "TimerOutputs", "(measure times)")
-using TimerOutputs
 @printf("%-6s %-7s %-21s %s\n", "[INFO]", "using", "DataStructures", "(LinkedList)")
 using DataStructures
 @printf("%-6s %-7s %-21s %s\n", "[INFO]", "using", "Random", "")
@@ -81,7 +79,6 @@ end
 
 CONFIG     = Config()
 COMPONENTS = Components()
-to         = TimerOutput() # stores the time spent on the different functions
 
 #--------------------------- CODE ---------------------------#
 
@@ -130,8 +127,6 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
 		return nadirsToStudy, false
 	end
 
-    @timeit to "b&b" begin
-
 	testTime = false
 
 	iterator != nothing && (iterator.value += 1)
@@ -143,8 +138,6 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
     if prunedType == NONE || prunedType == OPTIMALITY
 		newNadirsToStudy = LB_update!(prob, LB, dominatedNadirs, UB)
     end
-
-    end # TimerOutput
 
 	if prunedType == NONE && assignment.lastAssigned < prob.nbVar
 		canAddVar = (assignment.weight + prob.weights[assignment.lastAssigned + 1] <= prob.maxWeight)
@@ -244,8 +237,6 @@ julia> main()
 ```
 """
 function main(prob::BiOKP; timeMax = nothing, start = nothing)
-
-    reset_timer!(to) # TimerOutput
 
 	@assert prob.nbObj == 2 "This Branch and Bound supports only a Bio-objective problem"
 

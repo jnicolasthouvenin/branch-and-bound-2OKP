@@ -56,8 +56,6 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
 		end
 	end
 
-    @timeit to "SOLVE1OKP_combo" begin
-
     weightedProfits = Vector{Float64}(undef,prob.nbVar)
     for var in 1:prob.nbVar
         weightedProfits[var] = (λ[1]*prob.profits[1,var] + λ[2]*prob.profits[2,var])
@@ -78,8 +76,6 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
 
     returnedSol = Sol(x, assignment.profit + [sum(x[(assignment.lastAssigned+1):end] .* prob.profits[iter, (assignment.lastAssigned+1):end]) for iter = 1:prob.nbObj],assignment.weight + sum(prob.weights[(assignment.lastAssigned+1):end] .* x[(assignment.lastAssigned+1):end]), true)
 
-    end # TimerOutput
-
     CONFIG.debug && DEBUG_feasibleBinarySolution(prob,returnedSol)
 
     return returnedSol
@@ -93,8 +89,6 @@ Returns the optimal solution for the scalarized and relaxed problem (continuous 
 `assignment` is the current assignment to take into account.
 """
 function SOLVE1OKP_linear(prob::BiOKP, λ::Vector{Float64}, assignment::Assignment)
-
-    @timeit to "SOLVE1OKP_linear" begin
 
     utilities = Vector{Float64}(undef,prob.nbVar-assignment.lastAssigned)
 
@@ -136,8 +130,6 @@ function SOLVE1OKP_linear(prob::BiOKP, λ::Vector{Float64}, assignment::Assignme
 
     sol = Sol(x, profit, weight, isBinary)
 
-    end # TimerOutput
-
     CONFIG.debug && DEBUG_feasibleSolution(prob,sol)
 
 	return sol
@@ -152,8 +144,6 @@ Returns the optimal solution for the scalarized exact problem computed by the so
 """
 function SOLVE1OKP_GLPK(prob::BiOKP, λ::Vector{Float64}, assignment::Assignment)
 
-    @timeit to "SOLVE1OKP_GLPK" begin
-
 	model = Model(GLPK.Optimizer)
 	x = @variable(model, x[1:(prob.nbVar-assignment.lastAssigned)], Bin)
 	@constraint(model, Weights, sum(x .* prob.weights[(assignment.lastAssigned+1):end]) + assignment.weight <= prob.maxWeight)
@@ -164,8 +154,6 @@ function SOLVE1OKP_GLPK(prob::BiOKP, λ::Vector{Float64}, assignment::Assignment
 	X = append!(assignment.assign[1:assignment.lastAssigned],(Float64).(value.(x)))
 
 	termStatus = termination_status(model)
-
-    end # TimerOutput
 
 	if termStatus == MOI.OPTIMAL
         sol = Sol(X, [sum(X .* prob.profits[1,1:end]), sum(X .* prob.profits[2,1:end])], sum(X .* prob.weights), true)

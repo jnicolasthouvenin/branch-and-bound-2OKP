@@ -18,8 +18,6 @@ function SPS_partially_implicit(prob::BiOKP, assignment::Assignment, nadirsToStu
     CONFIG.debug && DEBUG_nadirs(prob,nadirsToStudy)
     CONFIG.debug && DEBUG_parentToChild(prob,parentToChild)
 
-    @timeit to "subProblemStudy" begin
-
     UB = UpperBound() # init
 
     # get initial solutions
@@ -115,8 +113,6 @@ function SPS_partially_implicit(prob::BiOKP, assignment::Assignment, nadirsToStu
 
         end
     end
-
-    end # TimerOutput
 end
 
 #-------------------------------------------------------------------#
@@ -134,8 +130,6 @@ function PRUNING_compareCstrToNadirs(prob::BiOKP, constraint::DualSet, nadirsToS
 
     CONFIG.debug && DEBUG_nadirs(prob,nadirsToStudy)
     CONFIG.debug && DEBUG_nadirs(prob,nonDomNadirs)
-
-    @timeit to "PRUNING_compareCstrToNadirs" begin
 
     dominatedNadirs = Vector{PairOfSolution}()
 
@@ -195,8 +189,6 @@ function PRUNING_compareCstrToNadirs(prob::BiOKP, constraint::DualSet, nadirsToS
     end
 
     sort!(nonDomNadirs, lt = (x, y) -> isless(x.solL.y[1],y.solL.y[1]))
-
-    end # TimerOutput
 
     CONFIG.debug && DEBUG_nadirs(prob, dominatedNadirs)
     CONFIG.debug && DEBUG_nadirs(prob, nonDomNadirs)

@@ -15,8 +15,6 @@ function strictInsertInFront!(prob::BiOKP, front::LinkedList{Sol}, sol::Sol)
     CONFIG.debug && DEBUG_front(prob, front)
     CONFIG.debug && DEBUG_feasibleSolution(prob, sol)
 
-    @timeit to "strictInsertInFront!" begin
-
 	solHasBeedInserted = false
     # going through the linked list to insert the solution at the right place
 	while front.tail != nil(Sol) && !solHasBeedInserted
@@ -29,8 +27,6 @@ function strictInsertInFront!(prob::BiOKP, front::LinkedList{Sol}, sol::Sol)
     # handling a possible bad case scenario
 	@assert solHasBeedInserted "The solution couldn't be inserted. This not usual.\n$front\n$(sol.y)"
 
-    end # TimerOutputs
-
     CONFIG.debug && DEBUG_front(prob, front)
 end
 
@@ -41,8 +37,6 @@ function mergeNadirs(prob::BiOKP, nadirs1::Vector{PairOfSolution}, nadirs2::Vect
 
     CONFIG.debug && DEBUG_nadirs(prob, nadirs1)
     CONFIG.debug && DEBUG_nadirs(prob, nadirs2)
-
-    @timeit to "mergeNadirs" begin
 
 	lengthA = length(nadirs1)
 	lengthB = length(nadirs2)
@@ -109,8 +103,6 @@ function mergeNadirs(prob::BiOKP, nadirs1::Vector{PairOfSolution}, nadirs2::Vect
     # keep only an array of the right length
     finalList = finalList[1:nbTrueElts]
 
-    end # TimerOutputs
-
     CONFIG.debug && DEBUG_nadirs(prob, finalList)
 
 	return finalList
@@ -154,8 +146,6 @@ function getLexicoSolutions(prob::BiOKP, assignment::Assignment, frontOfParent::
     CONFIG.debug && DEBUG_front(prob, frontOfParent)
     CONFIG.debug && DEBUG_parentToChild(prob, parentToChild)
 
-    @timeit to "getLexicoSolutions" begin
-
     # Compute the first lexicographic optimal solution
     if !parentToChild.leftKnown # the left sol isn't known by parentToChild
         λ = [1, 1000.]
@@ -182,8 +172,6 @@ function getLexicoSolutions(prob::BiOKP, assignment::Assignment, frontOfParent::
         parentToChild.rightKnown = true
     end
 
-    end # TimerOutputs
-
     CONFIG.debug && DEBUG_feasibleSolution(prob, leftSol)
     CONFIG.debug && DEBUG_feasibleSolution(prob, rightSol)
 
@@ -203,8 +191,6 @@ function computesPairsToStudy(prob::BiOKP, front::LinkedList{Sol}, parentToChild
     CONFIG.debug && DEBUG_parentToChild(prob, parentToChild)
     CONFIG.debug && DEBUG_feasibleSolution(prob, leftSol)
     CONFIG.debug && DEBUG_feasibleSolution(prob, rightSol)
-
-    @timeit to "computesPairsToStudy" begin
 
     toStudy = Vector{PairOfSolution}()
 
@@ -278,8 +264,6 @@ function computesPairsToStudy(prob::BiOKP, front::LinkedList{Sol}, parentToChild
             ll = ll.tail
         end
     end
-
-    end # TimerOutput
 
     CONFIG.debug && DEBUG_front(prob, front)
     CONFIG.debug && DEBUG_pairsOfSolutions(prob, toStudy)

@@ -25,8 +25,6 @@ The first version of this solver was implemented by Lucas Baussay, Mathilde Sede
 
 4. Solve it using the command : <code>$ main(p)</code>
 
-5. Print the computation times of each part of the code : <code>$ show(to)</code>
-
 ## Doc
 
 <table>

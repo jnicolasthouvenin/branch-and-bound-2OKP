@@ -8,16 +8,12 @@ Assign the next variable to one.
 """
 function ASSIGNMENT_addVar!(assignment::Assignment, prob::BiOKP)
 
-    @timeit to "ASSIGNMENT_addVar!" begin
-
 	assignment.lastAssigned += 1
 	assignment.assign[assignment.lastAssigned] = 1
 
 	assignment.weight += prob.weights[assignment.lastAssigned]
 
 	assignment.profit += prob.profits[1:end, assignment.lastAssigned]
-
-    end # TimerOutputs
 end
 
 """
@@ -27,8 +23,6 @@ The parameter `canAddVar` indicates if the variable has been assigned to one in 
 """
 function ASSIGNMENT_removeVar!(assignment::Assignment, prob::BiOKP, canAddVar::Bool)
 
-    @timeit to "ASSIGNMENT_removeVar!" begin
-
     if !canAddVar
 		assignment.lastAssigned += 1
 	else
@@ -37,8 +31,6 @@ function ASSIGNMENT_removeVar!(assignment::Assignment, prob::BiOKP, canAddVar::B
 	end
 
 	assignment.assign[assignment.lastAssigned] = 0
-
-    end # TimerOutputs
 end
 
 """
@@ -48,10 +40,6 @@ NOTE : no need to take of the weight of object ... because the backtrack always 
 """
 function ASSIGNMENT_backtrack!(assignment::Assignment)
 
-    @timeit to "ASSIGNMENT_backtrack!" begin
-
 	assignment.assign[assignment.lastAssigned] = -1
 	assignment.lastAssigned -= 1
-
-    end # TimerOutputs
 end
