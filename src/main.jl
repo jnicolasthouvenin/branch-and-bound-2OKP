@@ -1,6 +1,35 @@
 
 """ Main file """
 
+# Implementation of a bi-objective branch and bound for monodimensional knapsack problem.
+# The GeneticAlgorithms module provides two EMOA for enriching the initial lower bound.
+# The branchAndBound! function in main.jl performs the enumeration to compute all non dominated solutions of the pareto front.
+
+#------------------------------ STEPS ---------------------------------#
+
+# First step, run the dichotomy methoc in order to compute the X_SE1 set, the set of all non dominated and supported solutions.
+# Second step, run the primal heuristic - in this case one of the genetic algorithms available -
+#   using the lower bound computed at step 1 as seeding solutions.
+# Third step, start the branch and bound with the enriched lower bound obtained at step 2.
+
+# All these steps are visible in the function main(...)
+
+#------------------------------- COMPONENTS ---------------------------#
+
+# Several configurations exist that decide which tools will be used during the execution.
+# In order to change these tools, modify the default constructor of the object `Components`.
+
+# The first dichotomy method solves a sequence of scalarized problems. The solver used to solve these scalarizations,
+#   can be GLPK (called by JuMP) or COMBO. COMBO is an efficient knapsack solver. The binary for COMBO is located in deps/
+
+# The method for computing the upperbound also solves a sequence of scalarized problems. The solver used can be GLPK or COMBO
+#   and thus provides a feasible discrete solution. But it can also be a linear relaxation providing an unfeasible continuous solution.
+
+# The nadirShift field of Components is a boolean activating or not an optimization on the fathoming of subproblems.
+#   We made this an option in order to measure the improvements of this feature. Leave it on.
+
+# The primal_heuristic field of Components is a boolean activating or not the use of the genetic algorithm.
+
 # All functions are public
 
 #--------------------------- LOAD LIBRARIES ---------------------------#
@@ -26,7 +55,9 @@ include("GeneticAlgorithms/main.jl")
 
 const comboPath = joinpath(@__DIR__,"..","deps","libcombo.so")
 
+# JUMP (calling GLPK) or COMBO (the efficient KP solver)
 @enum FirstDicho JUMP COMBO
+# EXACT_JUMP (calling GLPK), EXACT_COMBO calling deps/libcombo.so, RELAX_LIN_CLASSIC solving linear relaxation
 @enum MethodUB EXACT_JUMP EXACT_COMBO RELAX_LIN_CLASSIC
 
 # Algorithm components selected for the execution
@@ -45,7 +76,7 @@ mutable struct Config
     # verbose
     # ...
 
-    Config() = new(true) # by default we are in debug mode
+    Config() = new(true) # by default we are in Debug mode
 end
 
 CONFIG     = Config()
@@ -231,8 +262,10 @@ function main(prob::BiOKP; timeMax = nothing, start = nothing)
 
 	compt = Iterator()
 
+    # compute the set of non dominated and supported solutions (also called lower bound)
     LB = LB_dichoSearch(prob, assignment)
 
+    # if primal heuristic is enabled, then the EMOA is called to add new solutions to the lower bound
     if COMPONENTS.primal_heuristic && prob.nbVar >= 50 # don't call the GAs on very small instances
         momkp        = GAINTERFACE_exportProb(prob)
         seeding_sols = GAINTERFACE_exportLB(prob, LB)
@@ -243,6 +276,7 @@ function main(prob::BiOKP; timeMax = nothing, start = nothing)
 
 	nadirs = LB_getNadirs(prob, LB)
 
+    # launch the enumeration
 	branchAndBound!(prob, LB, assignment, nadirs, parentToChild = ParentToChild(), iterator = compt, timeMax = timeMax, start = start)
 
     CONFIG.debug && DEBUG_LB(prob,LB)
