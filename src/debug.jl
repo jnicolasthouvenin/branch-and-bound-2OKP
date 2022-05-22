@@ -20,7 +20,7 @@ function DEBUG_LB(prob::BiOKP, LB::LowerBound)
     else
         sols = LB.sols
     end
-    
+
     for i in 1:length(sols)
 
         # feasible
@@ -59,7 +59,7 @@ function DEBUG_UB(prob::BiOKP, UB::UpperBound)
     else
         sols = UB.sols
     end
-    
+
     # check solutions
     for i in 1:length(sols)
 
@@ -149,7 +149,7 @@ function DEBUG_correctSolution(prob::BiOKP, sol::Sol)
 
     for i in 1:prob.nbVar
         elt = sol.x[i]
-        
+
         if sol.isBinary
             @assert (elt != 0.0 || elt != 1.0) "Solution is not truly binary : $(sol.x), $(sol.isBinary)"
         else
@@ -212,7 +212,7 @@ end
 
 " `Assertion` : `correct`, `feasible`, `sorted increasing`, `unicity`, `non dominated solutions` "
 function DEBUG_front(prob::BiOKP, front::Vector{Sol})
-    
+
     for i in 1:length(front)
 
         DEBUG_feasibleSolution(prob, front[i])
@@ -278,7 +278,7 @@ Assertion on knownSols : `front`, `sol.x[index] == value for every sol in list`.
 Assertion on previousIndicies : `sorted increasing`, `unicity`.
 """
 function DEBUG_parentToChild(prob::BiOKP, PTC::ParentToChild; index = -1, value = -1)
-    
+
     # secure knownSols
     DEBUG_front(prob, PTC.knownSols)
 

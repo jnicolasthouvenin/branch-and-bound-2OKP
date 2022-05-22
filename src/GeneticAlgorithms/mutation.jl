@@ -1,6 +1,6 @@
 
 function MUTATION_flip!(offspring::Sol)
-    
+
     debug && DEBUG_correct_solution(offspring)
 
     mut_ind = rand(1:offspring.prob.n) # mutation index

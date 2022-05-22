@@ -124,7 +124,7 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
 			parentToChild = UB_computeParentToChild(prob, UB, assignment.lastAssigned, 1)
 
             newNadirsToStudy, testTime = branchAndBound!(prob,
-                                                LB,												
+                                                LB,
 												assignment,
 												newNadirsToStudy,
 												parentToChild = parentToChild,
@@ -187,7 +187,7 @@ julia> p = FILES_readProblem("Inst_10_1")
 BiOKP(10, 2, [50.0 50.0 … 22.0 7.0; 42.0 20.0 … 1.0 16.0], [13.0, 41.0, 29.0, 27.0, 21.0, 30.0, 43.0, 42.0, 14.0, 40.0], 120.0, true)
 
 julia> main(p)
-(31, 
+(31,
 [93.0, 157.0]
 [136.0, 142.0]
 [148.0, 141.0]
@@ -203,7 +203,7 @@ julia> main(p)
 
 ```jldoctest
 julia> main()
-(19, 
+(19,
 [10.0, 15.0]
 [13.0, 14.0]
 [21.0, 12.0]
@@ -213,7 +213,7 @@ julia> main()
 ```
 """
 function main(prob::BiOKP; timeMax = nothing, start = nothing)
-    
+
     reset_timer!(to) # TimerOutput
 
 	@assert prob.nbObj == 2 "This Branch and Bound supports only a Bio-objective problem"

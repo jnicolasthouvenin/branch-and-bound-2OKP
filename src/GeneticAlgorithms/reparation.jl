@@ -19,7 +19,7 @@ function REPARATION_basic!(offspring::Sol)
     end
 
     debug && DEBUG_feasible_solution(offspring)
-    
+
 end
 
 function REPARATION_advanced!(offspring::Sol)
@@ -27,7 +27,7 @@ function REPARATION_advanced!(offspring::Sol)
     debug && DEBUG_correct_solution(offspring)
 
     if !SOLUTION_is_feasible(offspring)
-        
+
         λ = rand() # we pick a random direction for the reparation
         momkp = offspring.prob
 
@@ -87,5 +87,5 @@ function REPARATION_advanced!(offspring::Sol)
     end
 
     debug && DEBUG_feasible_solution(offspring)
-    
+
 end

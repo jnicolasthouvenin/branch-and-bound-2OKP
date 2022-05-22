@@ -62,20 +62,12 @@ The first version of this solver was implemented by Lucas Baussay, Mathilde Sede
 <td>Functions that write and read 2OKP instances on files</td>
 </tr>
 <tr>
-<td>fractionsStruct.jl</td>
-<td>Like rational type but using float numbers for numerator and denumerator (specific to Parametric Relaxation)</td>
-</tr>
-<tr>
 <td>lowerBound.jl</td>
 <td>Working with the LowerBound</td>
 </tr>
 <tr>
 <td>main.jl</td>
 <td>Main file</td>
-</tr>
-<tr>
-<td>parametricLinearRelax.jl</td>
-<td>Implementation of the parametric method for linear relaxation</td>
 </tr>
 <tr>
 <td>solve1OKP.jl</td>

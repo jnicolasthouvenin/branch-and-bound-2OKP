@@ -1,6 +1,6 @@
 
 function CROSSOVER_binary_uniform(p1::Sol, p2::Sol)
-    
+
     debug && DEBUG_feasible_solution(p1)
     debug && DEBUG_feasible_solution(p2)
 
@@ -23,7 +23,7 @@ function CROSSOVER_binary_uniform(p1::Sol, p2::Sol)
             SOLUTION_add_item!(offspring, idx_var)
         end
     end
-    
+
     debug && DEBUG_correct_solution(offspring)
 
     return offspring
@@ -31,7 +31,7 @@ function CROSSOVER_binary_uniform(p1::Sol, p2::Sol)
 end
 
 function CROSSOVER_one_point(p1::Sol, p2::Sol)
-    
+
     debug && DEBUG_feasible_solution(p1)
     debug && DEBUG_feasible_solution(p2)
 
@@ -55,7 +55,7 @@ function CROSSOVER_one_point(p1::Sol, p2::Sol)
             SOLUTION_add_item!(offspring, idx_var)
         end
     end
-    
+
     debug && DEBUG_correct_solution(offspring)
 
     return offspring
@@ -63,7 +63,7 @@ function CROSSOVER_one_point(p1::Sol, p2::Sol)
 end
 
 function CROSSOVER_two_points(p1::Sol, p2::Sol)
-    
+
     debug && DEBUG_feasible_solution(p1)
     debug && DEBUG_feasible_solution(p2)
 
@@ -90,7 +90,7 @@ function CROSSOVER_two_points(p1::Sol, p2::Sol)
             SOLUTION_add_item!(offspring, idx_var)
         end
     end
-    
+
     debug && DEBUG_correct_solution(offspring)
 
     return offspring

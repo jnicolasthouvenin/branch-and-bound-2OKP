@@ -11,7 +11,7 @@ function SOLUTION_is_feasible(sol::Sol)
         end
         dim += 1
     end
-    
+
     return feasible
 end
 
@@ -20,7 +20,7 @@ function SOLUTION_is_feasible_after_adding_item(sol::Sol, idx_var::Int)
     debug && DEBUG_correct_solution(sol)
 
     @assert sol.x[idx_var] == 0 "The item is already in the bag"
-    
+
     feasible = true
     dim = 1
     while feasible && dim <= sol.prob.m
@@ -29,7 +29,7 @@ function SOLUTION_is_feasible_after_adding_item(sol::Sol, idx_var::Int)
         end
         dim += 1
     end
-    
+
     return feasible
 end
 
@@ -64,7 +64,7 @@ function SOLUTION_remove_item!(sol::Sol, item::Int)
     end
 
     debug && DEBUG_correct_solution(sol)
-    
+
 end
 
 function SOLUTION_empty_solution(momkp::_MOMKP)

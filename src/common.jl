@@ -16,7 +16,7 @@ function strictInsertInFront!(prob::BiOKP, front::LinkedList{Sol}, sol::Sol)
     CONFIG.debug && DEBUG_feasibleSolution(prob, sol)
 
     @timeit to "strictInsertInFront!" begin
-        
+
 	solHasBeedInserted = false
     # going through the linked list to insert the solution at the right place
 	while front.tail != nil(Sol) && !solHasBeedInserted
@@ -55,17 +55,17 @@ function mergeNadirs(prob::BiOKP, nadirs1::Vector{PairOfSolution}, nadirs2::Vect
     elseif lengthB == 0
         return nadirs1
     end
-	
+
 	iterA = 1 # iterator on list A
 	iterB = 1 # iterator on list B
 	iterF = 1 # iterator on list F
-	
+
     # allocate the result
 	finalList = Vector{PairOfSolution}(undef, lengthA + lengthB)
 
     # number of elements in the result
     nbTrueElts = 0
-	
+
     # fill the elements in order until one iterator reaches the end of its list
 	while iterA <= lengthA && iterB <= lengthB
 		if nadirs1[iterA].solL.y[1] <= nadirs2[iterB].solL.y[1] # element A is chosen
@@ -88,7 +88,7 @@ function mergeNadirs(prob::BiOKP, nadirs1::Vector{PairOfSolution}, nadirs2::Vect
             iterB += 1
 		end
 	end
-	
+
     # finish by inserting the remaining elements
 	if iterA > lengthA
         for i in iterB:lengthB
@@ -112,7 +112,7 @@ function mergeNadirs(prob::BiOKP, nadirs1::Vector{PairOfSolution}, nadirs2::Vect
     end # TimerOutputs
 
     CONFIG.debug && DEBUG_nadirs(prob, finalList)
-	
+
 	return finalList
 end
 

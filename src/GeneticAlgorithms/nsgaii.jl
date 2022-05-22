@@ -98,7 +98,7 @@ function NSGAII_update(P::Vector{Sol}, config::Config)
 end
 
 function NSGAII_solve(prob::_MOMKP, config::Config; seeding_sols = Vector{Sol}(undef, 0), max_t = 10.0, verbose = true)
-    
+
     st = time()
 
     # create population

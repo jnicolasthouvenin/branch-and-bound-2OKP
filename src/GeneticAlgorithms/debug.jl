@@ -101,5 +101,5 @@ function DEBUG_unicity(population::Vector{Sol})
             @assert population[i].z != population[j].z "No unicity : $(population[i]), $(population[j])"
         end
     end
-    
+
 end

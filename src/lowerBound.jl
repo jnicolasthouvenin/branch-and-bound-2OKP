@@ -36,7 +36,7 @@ function LB_dichoSearch(prob::BiOKP, assignment::Assignment; parentToChild = Par
             LB.sols = cons(leftSol, LB.sols)
         end
     else # the two lexicographic solutions are different
-        
+
         # get the list of pairs of solutions to study
         toStudy, LB.sols = computesPairsToStudy(prob, LB.sols, parentToChild, leftSol, rightSol)
 
@@ -84,7 +84,7 @@ function LB_update!(prob::BiOKP, LB::LowerBound, dominatedNadirs::Vector{PairOfS
     CONFIG.debug && DEBUG_nadirs(prob, dominatedNadirs)
 
     @timeit to "LB_update!" begin
-    
+
     for sol in UB.sols
         # check if the solution found in the upper bound is binary (thus feasible)
         if !(COMPONENTS.methodUB == RELAX_LIN_CLASSIC) || sol.isBinary
@@ -93,14 +93,14 @@ function LB_update!(prob::BiOKP, LB::LowerBound, dominatedNadirs::Vector{PairOfS
 
             # insert sol at the right place (if the solution is not already dominated by the current LB)
             inserted = LB_insert!(prob, LB, sol)
-            
+
         end
     end
 
     newNadirsToStudy = LB_getNadirsWithNadirsToStudy(prob, LB, dominatedNadirs)
 
     end # TimerOutputs
-    
+
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_nadirs(prob, newNadirsToStudy)
 
@@ -113,12 +113,12 @@ Returns the nadir points `nadirs` associated with the given `LB`.
 function LB_getNadirs(prob::BiOKP, LB::LowerBound)
 
     CONFIG.debug && DEBUG_LB(prob, LB)
-    
+
     @timeit to "LB_getNadirs" begin
 
     sols = LB.sols
     nadirs = Vector{PairOfSolution}(undef, length(sols) - 1)
-    
+
     iterNadirs = 1
     # go through sols and simply create each nadir point
     while sols.tail != nil(Sol)
@@ -130,7 +130,7 @@ function LB_getNadirs(prob::BiOKP, LB::LowerBound)
     end # TimerOutputs
 
     CONFIG.debug && DEBUG_nadirs(prob, nadirs)
-    
+
     return nadirs
 end
 
@@ -227,7 +227,7 @@ function LB_removeAllDominatedSols!(prob::BiOKP, LB::LowerBound, sol::Sol)
                 removed = true
             end
         end
-    
+
         if ll != nil(Sol) && ll.tail != nil(Sol) && ll.tail.tail == nil(Sol)
             if dominate(sol,ll.tail.head)
                 removed = true
@@ -238,7 +238,7 @@ function LB_removeAllDominatedSols!(prob::BiOKP, LB::LowerBound, sol::Sol)
         end # TimerOutputs
 
         CONFIG.debug && DEBUG_front(prob, front)
-        
+
         return removed
 
     end
@@ -267,7 +267,7 @@ function LB_getNadirsWithNadirsToStudy(prob::BiOKP, LB::LowerBound, nadirsToStud
 
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_nadirs(prob, nadirsToStudy)
-    
+
     @timeit to "LB_getNadirsWithNadirsToStudy" begin
 
     # if the nadirsToStudy list is empty, just call the default function LB_getNadirs
@@ -307,6 +307,6 @@ function LB_getNadirsWithNadirsToStudy(prob::BiOKP, LB::LowerBound, nadirsToStud
     end # TimerOutputs
 
     CONFIG.debug && DEBUG_nadirs(prob, nadirs)
-    
+
     return nadirs
 end

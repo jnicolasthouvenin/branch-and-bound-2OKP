@@ -3,7 +3,7 @@
 
 # generate a totally random population of feasible solutions for the given momkp
 function INIT_random_feasible_population(size_population::Int, momkp::_MOMKP; seeding_sols = Vector{Sol}(undef, 0))
-    
+
     population = Vector{Sol}(undef, size_population)
 
     K = length(seeding_sols)

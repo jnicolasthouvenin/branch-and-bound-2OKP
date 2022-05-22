@@ -19,7 +19,7 @@ function UB_computeParentToChild(prob::BiOKP, UB::UpperBound, index::Int, value:
     # known solutions that go from the parent to the child node
 	knownSols = nil(Sol)
 	knownSolsLastElt = nil(Sol)
-	
+
     # indicies of the known solutions inside the parent UB.sols
     previousIndicies = nil(Int)
     previousIndiciesLastElt = nil(Int)
@@ -99,7 +99,7 @@ end
 Computes the segments associated with the given `UB.sols` as a DualSet
 """
 function UB_computeSegments!(prob::BiOKP, UB::UpperBound)
-    
+
     CONFIG.debug && DEBUG_UB(prob, UB)
 
     @timeit to "UB_computeSegments!" begin
@@ -162,5 +162,5 @@ function UB_computeSegments!(prob::BiOKP, UB::UpperBound)
     end # TimerOutput
 
     CONFIG.debug && DEBUG_UB(prob, UB)
-    
+
 end

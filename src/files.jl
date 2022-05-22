@@ -62,7 +62,7 @@ BiOKP(5, 2, [29.0 28.0 … 18.0 31.0; 11.0 36.0 … 27.0 37.0], [16.0, 50.0, 32.
 function FILES_readProblem(fileName::String)
 
     f = open(string("instances/",fileName,".dat"),"r")
-    
+
     first_line::Array{SubString{String},1} = split(readline(f))
     nbVars = parse(Int64, first_line[1])
     nbObj = parse(Int64, first_line[2])

@@ -13,7 +13,7 @@ end
 
 #=
 function UTIL_normalize_front(YN::Vector{Vector{Int}}, ref_YN::Vector{Vector{Int}})
-    
+
     N = length(YN)
     normalized_YN = Vector{Vector{Float64}}(undef, N)
 
@@ -37,14 +37,14 @@ function UTIL_invert_front(YN::Vector{Vector{Int}}, ref_YN::Vector{Vector{Int}};
     if !already_normalized
         YN = UTIL_normalize_front(YN, ref_YN)
     end
-    
+
     N = length(YN)
     inversed_YN = YN[1:N] # deepcopy
 
     for idx in 1:N
         @assert YN[idx][1] >= 0 && YN[idx][1] <= 1 "Front is not normalized"
         @assert YN[idx][2] >= 0 && YN[idx][2] <= 1 "Front is not normalized"
-        
+
         inversed_YN[idx][1] = 1 - inversed_YN[idx][1]
         inversed_YN[idx][2] = 1 - inversed_YN[idx][2]
     end
@@ -56,7 +56,7 @@ end
 =#
 
 function UTIL_remove_doublons_from_front(front::Vector{Sol})
-    
+
     debug && DEBUG_is_front(front)
 
     new_front = Vector{Sol}(undef, 0)
@@ -93,7 +93,7 @@ function UTIL_front_to_YN(front::Vector{Sol})
     end
 
     return YN
-    
+
 end
 
 function UTIL_write_YN(prob::_MOMKP, YN::Vector{Vector{Int}})

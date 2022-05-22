@@ -42,13 +42,13 @@ Convert `LowerBound` into a `front` for `GeneticAlgorithms`
 function GAINTERFACE_exportLB(prob::BiOKP, LB::LowerBound)
     n = length(LB.sols)
     LB_vec = Vector{GeneticAlgorithms.Sol}(undef, n)
-    
+
     LB_aux = LB.sols # (LinkedList{Sol})
     iter = 1
     while LB_aux.tail != nil(Sol)
         # fill the LB (array)
         LB_vec[iter] = GAINTERFACE_exportSol(prob, LB_aux.head)
-        
+
         LB_aux = LB_aux.tail # go next
         iter += 1
     end

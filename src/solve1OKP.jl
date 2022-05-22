@@ -36,7 +36,7 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
 			objectsCanBeAdded = objectsCanBeAdded || prob.weights[iter] <= (prob.maxWeight - assignment.weight)
             iter += 1
 		end
-		
+
 		if !objectsCanBeAdded # we can't add anymore objects
 
             sol = Sol(append!(Float64.(assignment.assign[1:assignment.lastAssigned]), zeros(Float64, prob.nbVar-assignment.lastAssigned)), assignment.profit, assignment.weight, true)
@@ -46,11 +46,11 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
 			return sol
 
 		elseif sum(prob.weights[(assignment.lastAssigned+1):end]) <= (prob.maxWeight - assignment.weight) # we can add all the objects
-            
+
             sol = Sol(append!(Float64.(assignment.assign[1:assignment.lastAssigned]), ones(Float64, prob.nbVar-assignment.lastAssigned)), assignment.profit + [sum(prob.profits[iter, (assignment.lastAssigned+1):end]) for iter=1:prob.nbObj], assignment.weight + sum(prob.weights[(assignment.lastAssigned+1):end]), true)
 
             CONFIG.debug && DEBUG_feasibleBinarySolution(prob,sol)
-			
+
 			return sol
 
 		end
@@ -60,17 +60,17 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
 
     weightedProfits = Vector{Float64}(undef,prob.nbVar)
     for var in 1:prob.nbVar
-        weightedProfits[var] = (λ[1]*prob.profits[1,var] + λ[2]*prob.profits[2,var]) 
+        weightedProfits[var] = (λ[1]*prob.profits[1,var] + λ[2]*prob.profits[2,var])
     end
-	
+
 	items = [Combo_item(weightedProfits[iter], prob.weights[iter], 0, iter) for iter = (assignment.lastAssigned+1):prob.nbVar]
-	
+
 	z = ccall((:solve, comboPath),Clonglong,(Ref{Combo_item}, Cint, Clonglong, Clonglong, Clonglong),items, (prob.nbVar - assignment.lastAssigned), (prob.maxWeight - assignment.weight), 0, 0)
 
     if z == 0
         z = dot(weightedProfits[(assignment.lastAssigned+1):end], broadcast(it->it.x, items))
     end
-    
+
     x = Float64.(append!(assignment.assign[1:assignment.lastAssigned], falses(prob.nbVar-assignment.lastAssigned)))
     for it in items
     	x[it.i] = Float64(it.x)
@@ -81,7 +81,7 @@ function SOLVE1OKP_combo(prob::BiOKP, λ::Vector{Float64}, assignment::Assignmen
     end # TimerOutput
 
     CONFIG.debug && DEBUG_feasibleBinarySolution(prob,returnedSol)
-    
+
     return returnedSol
 end
 
@@ -97,15 +97,15 @@ function SOLVE1OKP_linear(prob::BiOKP, λ::Vector{Float64}, assignment::Assignme
     @timeit to "SOLVE1OKP_linear" begin
 
     utilities = Vector{Float64}(undef,prob.nbVar-assignment.lastAssigned)
-	
+
     for i in 1:prob.nbVar-assignment.lastAssigned
         utilities[i] = (λ[1] * prob.profits[1,i+assignment.lastAssigned] + λ[2] * prob.profits[2,i+assignment.lastAssigned]) ./ prob.weights[i+assignment.lastAssigned]
     end
 
     permList = sortperm(utilities, rev = true)
-	
+
 	nbUnassignedVars = prob.nbVar-assignment.lastAssigned
-	
+
 	weight = assignment.weight
 	profit = assignment.profit[1:end]
 
@@ -115,7 +115,7 @@ function SOLVE1OKP_linear(prob::BiOKP, λ::Vector{Float64}, assignment::Assignme
         permList[iter] += assignment.lastAssigned
         x[assignment.lastAssigned + iter] = 0.
     end
-	
+
     iter = 1
     isBinary = true
     while iter <= nbUnassignedVars && weight + prob.weights[permList[iter]] <= prob.maxWeight
@@ -126,7 +126,7 @@ function SOLVE1OKP_linear(prob::BiOKP, λ::Vector{Float64}, assignment::Assignme
 
         iter += 1
     end
-	
+
     if iter <= nbUnassignedVars && (prob.maxWeight - weight) > 0.
         x[permList[iter]] = (prob.maxWeight - weight) / prob.weights[permList[iter]]
         profit += x[permList[iter]] * prob.profits[1:end, permList[iter]]
@@ -151,9 +151,9 @@ Returns the optimal solution for the scalarized exact problem computed by the so
 `assignment` is the current assignment to take into account.
 """
 function SOLVE1OKP_GLPK(prob::BiOKP, λ::Vector{Float64}, assignment::Assignment)
-    
+
     @timeit to "SOLVE1OKP_GLPK" begin
-        
+
 	model = Model(GLPK.Optimizer)
 	x = @variable(model, x[1:(prob.nbVar-assignment.lastAssigned)], Bin)
 	@constraint(model, Weights, sum(x .* prob.weights[(assignment.lastAssigned+1):end]) + assignment.weight <= prob.maxWeight)
@@ -162,16 +162,16 @@ function SOLVE1OKP_GLPK(prob::BiOKP, λ::Vector{Float64}, assignment::Assignment
 	optimize!(model)
 
 	X = append!(assignment.assign[1:assignment.lastAssigned],(Float64).(value.(x)))
-	
+
 	termStatus = termination_status(model)
 
     end # TimerOutput
 
 	if termStatus == MOI.OPTIMAL
         sol = Sol(X, [sum(X .* prob.profits[1,1:end]), sum(X .* prob.profits[2,1:end])], sum(X .* prob.weights), true)
-        
+
         CONFIG.debug && DEBUG_feasibleBinarySolution(prob,sol)
-		
+
         return sol
 
 	elseif termStatus == MOI.INFEASIBLE

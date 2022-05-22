@@ -44,7 +44,7 @@ function SPS_partially_implicit(prob::BiOKP, assignment::Assignment, nadirsToStu
         end
 
     else # the two lexicographic solutions are different
-        
+
         # get the list of pairs of solutions to study
         toStudy, UB.sols = computesPairsToStudy(prob, UB.sols, parentToChild, leftSol, rightSol)
 
@@ -136,7 +136,7 @@ function PRUNING_compareCstrToNadirs(prob::BiOKP, constraint::DualSet, nadirsToS
     CONFIG.debug && DEBUG_nadirs(prob,nonDomNadirs)
 
     @timeit to "PRUNING_compareCstrToNadirs" begin
-    
+
     dominatedNadirs = Vector{PairOfSolution}()
 
     regionLimit == [-1,-1] ? checkLimits = false : checkLimits = true

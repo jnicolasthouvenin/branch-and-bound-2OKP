@@ -192,7 +192,7 @@ end
 # evaluates the epsilon indicator value of the given front
 # `Assertion` : front is a front, hence solutions are mutually non dominated
 function INDICATOR_unary_epsilon(prob::_MOMKP, front::Vector{Sol})
-    
+
     debug && DEBUG_feasible_solutions(front)
     debug && DEBUG_is_front(front)
 
@@ -213,7 +213,7 @@ function INDICATOR_unary_epsilon(YN::Vector{Vector{Int}}, ref_YN::Vector{Vector{
     eps_given_i_j = 0.0 # largest difference given i,j
     eps_given_i = 0.0 # smallest eps_given_i_j, given j
     eps = 0.0 # largest eps_given_i, given i i.e. smallest shift necessary to have YN above ref_YN
-    
+
     buffer = 0.0
 
     for i in 1:N_true
@@ -245,7 +245,7 @@ function INDICATOR_unary_epsilon(YN::Vector{Vector{Int}}, ref_YN::Vector{Vector{
             eps = eps_given_i
         end
     end
-    
+
     return eps
 
 end
