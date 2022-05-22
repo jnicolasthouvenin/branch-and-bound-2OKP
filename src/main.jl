@@ -7,6 +7,8 @@
 
 #------------------------------ STEPS ---------------------------------#
 
+# The algorithm works as follows:
+
 # First step, run the dichotomy methoc in order to compute the X_SE1 set, the set of all non dominated and supported solutions.
 # Second step, run the primal heuristic - in this case one of the genetic algorithms available -
 #   using the lower bound computed at step 1 as seeding solutions.
