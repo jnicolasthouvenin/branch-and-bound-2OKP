@@ -3,7 +3,7 @@
 
 # Public functions :
 # - LB_dichoSearch : computes X_SE1
-# - LB_update! : provide the LB with potential new points
+# - LB_update! : add potential new points to the given LB
 # - LB_getNadirs : computes the local nadir points of a given LB
 
 #-------------------------------------------------------------------#
@@ -87,7 +87,7 @@ function LB_update!(prob::BiOKP, LB::LowerBound, dominatedNadirs::Vector{PairOfS
     
     for sol in UB.sols
         # check if the solution found in the upper bound is binary (thus feasible)
-        if !(COMPONENTS.methodUB == RELAX_LIN_CLASSIC || COMPONENTS.methodUB == RELAX_LIN_SPEED_UP) || sol.isBinary
+        if !(COMPONENTS.methodUB == RELAX_LIN_CLASSIC) || sol.isBinary
 
             LB_removeAllDominatedSols!(prob, LB, sol)
 

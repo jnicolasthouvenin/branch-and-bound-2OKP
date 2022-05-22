@@ -10,7 +10,7 @@ function test(instance_path::String)
     println(CONFIG)
 
     dichos = [JUMP, COMBO]
-    methods = [EXACT_JUMP, EXACT_COMBO, RELAX_LIN_CLASSIC, RELAX_LIN_SPEED_UP]
+    methods = [EXACT_JUMP, EXACT_COMBO, RELAX_LIN_CLASSIC]
     tab = [false, true]
 
     last_cpt, last_lb = 0,0

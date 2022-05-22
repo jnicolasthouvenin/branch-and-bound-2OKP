@@ -7,12 +7,6 @@
 # These functions are expensive. When launching benchmarks, make sure to set
 # CONFIG.debug to false.
 
-# The file is divided in two sections :
-#   - core : the debug functions used in the core source files
-#   - parametric relaxation : the debug functions specific to the parametric relax (optional)
-
-#------------------------- CORE -------------------------#
-
 " `Assertion` : `correct`, `feasible`, `integer`, `sorted z1 increasing`, `unicity`, `non dominated solutions`"
 function DEBUG_LB(prob::BiOKP, LB::LowerBound)
 
@@ -312,31 +306,4 @@ function DEBUG_parentToChild(prob::BiOKP, PTC::ParentToChild; index = -1, value 
             @assert prevArray[i] < prevArray[j] "Indicies not sorted"
         end
     end
-end
-
-#---------------- PARAMETRIC RELAXATION ------------------#
-
-" `Assertion` : `valid index`, `lambdas values sorted increasing` "
-function DEBUG_lambdas(lambdas::Vector{LambdaChange})
-
-    for i in 1:length(lambdas)
-
-        # check if the index is a distinct tuple (not the same number) and n1 < n2
-        (n1,n2) = lambdas[i].index
-        @assert n1 < n2 || (n1 == 0 && n2 == 0) "The index of the lambda doesn't fit the rule n1 < n2"
-
-        for j in (i+1):length(lambdas)
-
-            # check if the list is sorted
-            @assert lambdas[j].value <= lambdas[i].value "$i,$j,$(lambdas[j].value),$(lambdas[i].value) The lambdas are not sorted decreasing"
-
-        end
-
-    end
-
-end
-
-" `Assertion` : `nbEltNewIndicies = nbEltLambdas` "
-function DEBUG_newIndices(nbEltNewIndicies::Int,nbEltLambdas::Int)
-    @assert nbEltNewIndicies == nbEltLambdas "New Indicies have a different length than lambdas"
 end

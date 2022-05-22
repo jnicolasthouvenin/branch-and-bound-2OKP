@@ -2,33 +2,11 @@
 """ Functions indicating if a subproblem can be fathomed and giving information on the dominated nadir points of the lower bound and upper Bound solutions """
 
 # Public functions :
-# - SPS_parametric : study sub problem using parametric linear relaxation
 # - SPS_partially_implicit : study sub problem using partial dichotomy
 
 #-------------------------------------------------------------------#
 #------------------------ PUBLIC FUNCTIONS -------------------------#
 #-------------------------------------------------------------------#
-
-""" Study the subproblem using the parametric linear relaxation """
-function SPS_parametric(prob::BiOKP, assignment::Assignment, nadirsToStudy::Vector{PairOfSolution}, LSU::LinearSpeedUp; parentToChild = ParentToChild())
-
-    CONFIG.debug && DEBUG_nadirs(prob, nadirsToStudy)
-    CONFIG.debug && DEBUG_parentToChild(prob, parentToChild)
-    
-    UB = parametricMethod(prob, assignment, LSU)
-
-    UB_computeSegments!(prob, UB)
-
-    # operate the pruning test
-    prunedType, dominatedNadirs, nonDomNadirs = PRUNING_explicit(prob, UB, nadirsToStudy)
-
-    CONFIG.debug && DEBUG_nadirs(prob, dominatedNadirs)
-    CONFIG.debug && DEBUG_nadirs(prob, nonDomNadirs)
-    CONFIG.debug && DEBUG_UB(prob, UB)
-
-    return prunedType, dominatedNadirs, nonDomNadirs, UB
-
-end
 
 """
 Optimized pruning test (for dichoSearch type UB computation)
@@ -144,86 +122,6 @@ end
 #-------------------------------------------------------------------#
 #----------------------- PRIVATE FUNCTIONS -------------------------#
 #-------------------------------------------------------------------#
-
-"""
-Classic pruning test (for parametric UB computation)
-
-Tests if the node of the subproblem can be pruned. Returns a triplet containing the pruning type, the dominated nadir points (those to keep studying) and the non dominated one (those to discard for this sub tree).
-"""
-function PRUNING_explicit(prob::BiOKP, UB::UpperBound, nadirsToStudy::Vector{PairOfSolution})
-
-    CONFIG.debug && DEBUG_UB(prob,UB)
-    CONFIG.debug && DEBUG_nadirs(prob,nadirsToStudy)
-    
-    @timeit to "PRUNING_explicit" begin
-
-    # extract data from UB
-    sols = UB.sols
-    A = UB.segments.A
-    b = UB.segments.b
-
-    # the UB is empty
-    sols == nil(Sol) && return INFEASIBILITY, Vector{PairOfSolution}(), nadirsToStudy
-    # the UB contains only one solution and this solution is binary -> OPTIMALITY
-	sols.tail == nil(Sol) && sols.head.isBinary && return OPTIMALITY, nadirsToStudy, Vector{PairOfSolution}()
-    # the UB contains only one solution but this solution isn't binary
-	sols.tail == nil(Sol) && return NONE, nadirsToStudy, Vector{PairOfSolution}()
-
-    # initialisation
-	subIsDominated = true
-	dominatedNadirs = Vector{PairOfSolution}()
-	nonDomNadirs = Vector{PairOfSolution}()
-
-    # for each nadir point to study
-	for pairNadir in nadirsToStudy
-
-        if prob.isInteger && COMPONENTS.nadirsShift
-		    nadir = [pairNadir.solL.y[1] + 1, pairNadir.solR.y[2] + 1] # - 0.0...1 to avoid bad roundings
-        else
-            nadir = [pairNadir.solL.y[1], pairNadir.solR.y[2]]
-        end
-
-		nadirProjection = A * nadir
-
-		iter = 1
-
-		isNadirUnderUB = true
-
-        # compute isNadirUnderUB : verify that the nadir point is lower that the upper bound on all objectives
-		while iter <= length(b) && isNadirUnderUB
-            if prob.isInteger && COMPONENTS.nadirsShift
-                isNadirUnderUB = isNadirUnderUB && nadirProjection[iter] <= b[iter]
-            else
-                isNadirUnderUB = isNadirUnderUB && nadirProjection[iter] < b[iter]
-            end
-			iter += 1
-		end
-
-		if isNadirUnderUB # the nadir is dominated but the UB
-			push!(dominatedNadirs, pairNadir)
-		else
-			push!(nonDomNadirs, pairNadir)
-		end
-
-        # if even one nadir is dominated then the sub problem can't be pruned by dominance.
-		subIsDominated = subIsDominated && !isNadirUnderUB
-	end
-
-    end # TimerOutput
-
-	if subIsDominated
-
-        CONFIG.debug && DEBUG_nadirs(prob, nadirsToStudy)
-
-		return DOMINANCE, Vector{PairOfSolution}(), nadirsToStudy
-	else
-
-        CONFIG.debug && DEBUG_nadirs(prob, dominatedNadirs)
-        CONFIG.debug && DEBUG_nadirs(prob, nonDomNadirs)
-
-		return NONE, dominatedNadirs, nonDomNadirs
-	end
-end
 
 """
 Indicates if the subproblem is dominated, as well as a partition of nadir points (dominated vs non dominated)

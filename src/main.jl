@@ -27,7 +27,7 @@ include("GeneticAlgorithms/main.jl")
 const comboPath = joinpath(@__DIR__,"..","deps","libcombo.so")
 
 @enum FirstDicho JUMP COMBO
-@enum MethodUB EXACT_JUMP EXACT_COMBO RELAX_LIN_CLASSIC RELAX_LIN_SPEED_UP
+@enum MethodUB EXACT_JUMP EXACT_COMBO RELAX_LIN_CLASSIC
 
 # Algorithm components selected for the execution
 mutable struct Components
@@ -57,8 +57,6 @@ to         = TimerOutput() # stores the time spent on the different functions
 println("\n\$ Loading source files")
 
 # Elementary
-@printf("%-6s %-7s %-21s %-s\n", "[INFO]", "include", "fractionsStruct", "(parametricRelax)")
-include("fractionsStruct.jl")
 @printf("%-6s %-7s %-21s %-s\n", "[INFO]", "include", "structs", "(core)")
 include("structs.jl")
 @printf("%-6s %-7s %-21s %-s\n", "[INFO]", "include", "GAInterface", "(GeneticAlgorithms)")
@@ -83,15 +81,14 @@ include("lowerBound.jl")
 include("upperBound.jl")
 @printf("%-6s %-7s %-21s %-s\n", "[INFO]", "include", "subProblemStudy", "(core)")
 include("subProblemStudy.jl")
-@printf("%-6s %-7s %-21s %-s\n", "[INFO]", "include", "parametricLinearRelax", "(parametricRelax)")
-include("parametricLinearRelax.jl")
+
 
 println("")
 
 """
 Returns the new nadir points to study and the time spent on computation. Modifies the LB in place.
 """
-function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, nadirsToStudy::Vector{PairOfSolution}; verbose = false, LSU::LinearSpeedUp = LinearSpeedUp(), parentToChild = ParentToChild(), num::Int = 1, iterator = nothing, timeMax = nothing, start = nothing)
+function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, nadirsToStudy::Vector{PairOfSolution}; verbose = false, parentToChild = ParentToChild(), num::Int = 1, iterator = nothing, timeMax = nothing, start = nothing)
 
     CONFIG.debug && DEBUG_LB(prob, LB)
     CONFIG.debug && DEBUG_nadirs(prob, nadirsToStudy)
@@ -109,13 +106,7 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
 	iterator != nothing && (iterator.value += 1)
 
     # Study the subproblem
-    if COMPONENTS.methodUB == RELAX_LIN_SPEED_UP
-        prunedType, dominatedNadirs, nonDomNadirs, UB = SPS_parametric(prob, assignment, nadirsToStudy, LSU, parentToChild = parentToChild)
-    else
-        prunedType, dominatedNadirs, nonDomNadirs, UB = SPS_partially_implicit(prob, assignment, nadirsToStudy, parentToChild = parentToChild)
-    end
-    
-    #prunedType, dominatedNadirs, nonDomNadirs, UB = SPS_subProblemStudy(prob, assignment, nadirsToStudy, parentToChild = parentToChild, LSU = LSU)
+    prunedType, dominatedNadirs, nonDomNadirs, UB = SPS_partially_implicit(prob, assignment, nadirsToStudy, parentToChild = parentToChild)
 
     # update the LB if necessary
     if prunedType == NONE || prunedType == OPTIMALITY
@@ -136,7 +127,6 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
                                                 LB,												
 												assignment,
 												newNadirsToStudy,
-                                                LSU = LSU,
 												parentToChild = parentToChild,
 												num = num + 1,
 												iterator = iterator,
@@ -151,7 +141,6 @@ function branchAndBound!(prob::BiOKP, LB::LowerBound, assignment::Assignment, na
 											LB,
 											assignment,
 											newNadirsToStudy,
-                                            LSU = LSU,
 											parentToChild = parentToChild,
 											num = num + 1,
 											iterator = iterator,
@@ -254,13 +243,7 @@ function main(prob::BiOKP; timeMax = nothing, start = nothing)
 
 	nadirs = LB_getNadirs(prob, LB)
 
-    if COMPONENTS.methodUB == RELAX_LIN_SPEED_UP
-        LSU = initialiseLinearSpeedUp(prob)
-    else
-        LSU = LinearSpeedUp()
-    end
-
-	branchAndBound!(prob, LB, assignment, nadirs, LSU = LSU, parentToChild = ParentToChild(), iterator = compt, timeMax = timeMax, start = start)
+	branchAndBound!(prob, LB, assignment, nadirs, parentToChild = ParentToChild(), iterator = compt, timeMax = timeMax, start = start)
 
     CONFIG.debug && DEBUG_LB(prob,LB)
 

@@ -45,18 +45,6 @@ struct DualSet
 	b::Array{Float64, 1}
 end
 
-# used in the parametric pretreatment
-mutable struct LambdaChange
-	index::Tuple{Int, Int}
-	value::Frac
-end
-
-# for storing parametric pretreatment
-mutable struct LinearSpeedUp
-    indicies::Vector{Vector{Tuple{Int,Int}}}
-    permObj::Vector{Int}
-end
-
 # for storing known solutions that are present in the parent and the child node
 mutable struct ParentToChild
     knownSols::LinkedList{Sol} # solutions that are identical from the parent to the child node
@@ -164,12 +152,6 @@ function DualSet()
     return DualSet(Matrix{Float64}(undef, 0, 2), Vector{Float64}(undef, 0))
 end
 
-# LINEAR SPEED UP ######################
-
-function LinearSpeedUp()
-    return LinearSpeedUp(Vector{LambdaChange}(),Vector{Int}())
-end
-
 # FROM PARENT TO CHILD ######################
 
 function ParentToChild()
@@ -261,12 +243,4 @@ function Base.show(io::IO, vec::Vector{PairOfSolution})
         println(io, "$(elt.solL.y),$(elt.solR.y)")
     end
     println(io,"")
-end
-
-function Base.show(io::IO, vec::Vector{LambdaChange})
-    print(io,"(")
-    for elt in vec
-        println(io, "$(elt.value) - $(elt.index)")
-    end
-    println(io,")")
 end
